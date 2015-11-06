@@ -71,6 +71,7 @@ function agile_import_wiki_form_validate($form, &$form_state) {
 function agile_import_wiki_form_submit($form, &$form_state) {
   $path = $form_state['values']['source_dir'];
   $records = agile_wiki_read_csv($path);
+  agile_wiki_get_terms($records);
   $batch = array(
     'title' => t('Adding Objects'),
     'operations' => array(),
@@ -160,7 +161,7 @@ function agile_wiki_get_terms($records) {
         $temporals[] = $term;
       }
       else {
-        $topics = $term;
+        $topics[] = $term;
       }
     }
   }
@@ -214,7 +215,20 @@ function agile_wiki_build_mods($record) {
   foreach ($authors as $author) {
     agile_wiki_add_author($author);
   }
-
+  $terms = explode('|', $record['categories']);
+  foreach ($terms as $term) {
+    if (is_int($term)) {
+      $temporals[] = $term;
+    }
+    else {
+      $topics[] = $term;
+    }
+  }
+  $subjects = array(
+    'topic' => $topics,
+    'temporal' => $temporals,
+  );
+  agile_wiki_add_subjects($xml, $subjects);
 
   return $xml->saveXML();
 }
@@ -236,4 +250,18 @@ function agile_wiki_add_author($xml, $name) {
   $roleTerm_node->setAttribute('authority', 'marcrelator');
   $roleTerm_node->setAttribute('type', 'text');
   $role_node->appendChild($roleTerm_node);
+}
+
+function agile_wiki_add_subjects($xml, $subjects) {
+  $mods_uri = "http://www.loc.gov/mods/v2";
+  $root = $xml->documentElement;
+  // subject.
+  $subject_node = $xml->createElementNS($mods_uri, 'mods:subject');
+  $root->appendChild($subject_node);
+  foreach($subjects as $key => $terms) {
+    foreach ($terms as $term) {
+        $term_node = $xml->createElementNS($mods_uri, "mods:$key", $term);
+        $subject_node->appendChild($term_node);
+    }
+  }
 }
