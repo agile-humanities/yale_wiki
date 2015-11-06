@@ -1,0 +1,7 @@
+name = Agile Wiki Importer
+description = Custom module to import Yake Wiki into Modernist Commons
+core = 7.x
+dependencies[] = islandora
+dependencies[] = islandora_html_snippet
+package = Agile Humanities
+version = 7.x-1.0
