@@ -211,6 +211,10 @@ function agile_wiki_build_mods($record) {
   $title_node = $xml->createElementNS($mods_uri, 'mods:title', $record['title']);
   $titleInfo_node->appendChild($title_node);
 
+  $identifier_node = $xml->createElementNS($mods_uri, 'mods:identifier', $record['page_id']);
+  $identifier_node->setAttribute('type', 'local');
+  $root->appendChild($identifier_node);
+
   $authors = explode('|', $record['authors']);
   foreach ($authors as $author) {
     agile_wiki_add_author($author);
@@ -258,10 +262,10 @@ function agile_wiki_add_subjects($xml, $subjects) {
   // subject.
   $subject_node = $xml->createElementNS($mods_uri, 'mods:subject');
   $root->appendChild($subject_node);
-  foreach($subjects as $key => $terms) {
+  foreach ($subjects as $key => $terms) {
     foreach ($terms as $term) {
-        $term_node = $xml->createElementNS($mods_uri, "mods:$key", $term);
-        $subject_node->appendChild($term_node);
+      $term_node = $xml->createElementNS($mods_uri, "mods:$key", $term);
+      $subject_node->appendChild($term_node);
     }
   }
 }
