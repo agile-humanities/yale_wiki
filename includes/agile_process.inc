@@ -112,13 +112,21 @@ function agile_batch_add_wiki($record, $namespace, $collection_pid) {
   $object->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:sp_html_snippet');
   $object->label = $record['title'];
   $object->owner = $user->name;
-  // Add OBJ datasatream.
-  $file = agile_wiki_get_associated_file($record['page_id']);  //ROSIE!!!  Write this function!!!
-  $ds = $object->constructDatastream('OBJ', 'M');
-  $ds->setContentFromFile($file, FALSE);
-  $ds->label = 'OBJ';
-  $ds->mimetype = "text/html";
-  $object->ingestDatastream($ds);
+
+  // Create and add MODS
+  $mods = agile_wiki_build_mods($record);
+  $mods_ds = $object->constructDatastream('MODS', 'M');
+  $mods_ds->setContentFromString($mods);
+  $mods_ds->label = 'MODS';
+  $mods_ds->mimetype = 'text/xml';
+  $object->ingestDatastream($mods_ds);
+  // Add OBJ datastream.
+//  $file = agile_wiki_get_associated_file($record['page_id']);  //ROSIE!!!  Write this function!!!
+//  $ds = $object->constructDatastream('OBJ', 'M');
+//  $ds->setContentFromFile($file, FALSE);
+//  $ds->label = 'OBJ';
+//  $ds->mimetype = "text/html";
+//  $object->ingestDatastream($ds);
   islandora_add_object($object);
 }
 
@@ -187,4 +195,45 @@ function agile_wiki_get_terms($records) {
           'vid' => $topicl->vid,
     ));
   }
+}
+
+function agile_wiki_build_mods($record) {
+  $xml = new DomDocument('1.0', 'UTF-8');
+  $xml->preserveWhiteSpace = false;
+  $xml->formatOutput = true;
+  $mods_uri = "http://www.loc.gov/mods/v3";
+  //root.
+  $root = $xml->createElementNS($mods_uri, 'mods:mods');
+  $xml->appendChild($root);
+  $titleInfo_node = $xml->createElementNS($mods_uri, "mods:titleInfo");
+  $root->appendChild($titleInfo_node);
+  $title_node = $xml->createElementNS($mods_uri, 'mods:title', $record['title']);
+  $titleInfo_node->appendChild($title_node);
+
+  $authors = explode('|', $record['authors']);
+  foreach ($authors as $author) {
+    agile_wiki_add_author($author);
+  }
+
+
+  return $xml->saveXML();
+}
+
+function agile_wiki_add_author($xml, $name) {
+  $mods_uri = "http://www.loc.gov/mods/v2";
+  $root = $xml->documentElement;
+  // name.
+  $name_node = $xml->createElementNS($mods_uri, 'mods:name');
+  $name_node->setAttribute('type', 'personal');
+  $root->appendChild($name_node);
+  //namePart
+  $name_part = $xml->createElementNS($mods_uri, 'mods:namePart', $name);
+  $name_node->appendChild($name_part);
+  //role
+  $role_node = $xml->createElementNS($mods_uri, 'mods:role');
+  $name_node->appendChild($role_node);
+  $roleTerm_node = $xml->createElementNS($mods_uri, 'mods:roleTerm', "Author");
+  $roleTerm_node->setAttribute('authority', 'marcrelator');
+  $roleTerm_node->setAttribute('type', 'text');
+  $role_node->appendChild($roleTerm_node);
 }
