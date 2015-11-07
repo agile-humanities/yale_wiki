@@ -52,7 +52,7 @@ function agile_import_wiki_form($form, &$form_state) {
  *   Drupal form state
  */
 function agile_import_wiki_form_validate($form, &$form_state) {
-  if (!is_dir($form_state['values']['source_dir'])) {
+  if (!is_file($form_state['values']['source_dir'])) {
     form_set_error('source_dir', t('Not a valid file path.'));
   }
   if (!islandora_object_load($form_state['values']['collection'])) {
@@ -105,13 +105,14 @@ function agile_import_wiki_form_submit($form, &$form_state) {
  * @param string $source_path
  *   File Path
  */
-function agile_batch_add_wiki($record, $namespace, $collection_pid) {
+function agile_batch_add_record($record, $namespace, $collection_pid) {
   global $user;
   $tuque = new IslandoraTuque();
   $object = $tuque->repository->constructObject($namespace);
   $object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $collection_pid);
   $object->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:sp_html_snippet');
-  $object->label = $record['title'];
+  $title = str_replace('\"', '"', $record['page_title']);
+  $object->label = $title;
   $object->owner = $user->name;
 
   // Create and add MODS
@@ -157,7 +158,7 @@ function agile_wiki_get_terms($records) {
   foreach ($records as $record) {
     $terms = explode('|', $record['categories']);
     foreach ($terms as $term) {
-      if (is_int($term)) {
+      if (intval($term)  != 0) {
         $temporals[] = $term;
       }
       else {
@@ -193,7 +194,7 @@ function agile_wiki_get_terms($records) {
   foreach ($topics as $term) {
     taxonomy_term_save((object) array(
           'name' => $term,
-          'vid' => $topicl->vid,
+          'vid' => $topic->vid,
     ));
   }
 }
@@ -208,7 +209,8 @@ function agile_wiki_build_mods($record) {
   $xml->appendChild($root);
   $titleInfo_node = $xml->createElementNS($mods_uri, "mods:titleInfo");
   $root->appendChild($titleInfo_node);
-  $title_node = $xml->createElementNS($mods_uri, 'mods:title', $record['title']);
+  $title = str_replace('\"', '"', $record['page_title']);
+  $title_node = $xml->createElementNS($mods_uri, 'mods:title', $title);
   $titleInfo_node->appendChild($title_node);
 
   $identifier_node = $xml->createElementNS($mods_uri, 'mods:identifier', $record['page_id']);
@@ -217,11 +219,11 @@ function agile_wiki_build_mods($record) {
 
   $authors = explode('|', $record['authors']);
   foreach ($authors as $author) {
-    agile_wiki_add_author($author);
+    agile_wiki_add_author($xml, $author);
   }
   $terms = explode('|', $record['categories']);
   foreach ($terms as $term) {
-    if (is_int($term)) {
+    if (intval($term)  != 0) {
       $temporals[] = $term;
     }
     else {

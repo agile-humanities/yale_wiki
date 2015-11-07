@@ -1,13 +1,13 @@
 <?php
 
-function alan_test_menu() {
+function agile_wiki_menu() {
   $items['agile/wiki/import'] = array(
-      'title' => 'Import Wiki from CSV',
-      'type' => MENU_NORMAL_ITEM,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('agile_process_csv_form'),
-      'file' => 'includes/agile_process.inc',
-      'access arguments' => array('access content'),
+    'title' => 'Import Wiki from CSV',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('agile_import_wiki_form'),
+    'file' => 'includes/agile_process.inc',
+    'access arguments' => array('access content'),
   );
   return $items;
 }
