@@ -158,7 +158,7 @@ function agile_wiki_get_terms($records) {
   foreach ($records as $record) {
     $terms = explode('|', $record['categories']);
     foreach ($terms as $term) {
-      if (intval($term)  != 0) {
+      if (intval($term) != 0) {
         $temporals[] = $term;
       }
       else {
@@ -177,10 +177,13 @@ function agile_wiki_get_terms($records) {
   }
   $temporals = array_unique($temporals);
   foreach ($temporals as $term) {
-    taxonomy_term_save((object) array(
-          'name' => $term,
-          'vid' => $temporal->vid,
-    ));
+    $check = taxonomy_get_term_by_name($term);
+    if (empty($check)) {
+      taxonomy_term_save((object) array(
+            'name' => $term,
+            'vid' => $temporal->vid,
+      ));
+    }
   }
   $topic = taxonomy_vocabulary_machine_name_load('topic');
   if (!$topic->vid) {
@@ -192,10 +195,13 @@ function agile_wiki_get_terms($records) {
   }
   $topics = array_unique($topics);
   foreach ($topics as $term) {
-    taxonomy_term_save((object) array(
-          'name' => $term,
-          'vid' => $topic->vid,
-    ));
+    $check = taxonomy_get_term_by_name($term);
+    if (empty($check)) {
+      taxonomy_term_save((object) array(
+            'name' => $term,
+            'vid' => $topic->vid,
+      ));
+    }
   }
 }
 
@@ -223,7 +229,7 @@ function agile_wiki_build_mods($record) {
   }
   $terms = explode('|', $record['categories']);
   foreach ($terms as $term) {
-    if (intval($term)  != 0) {
+    if (intval($term) != 0) {
       $temporals[] = $term;
     }
     else {
