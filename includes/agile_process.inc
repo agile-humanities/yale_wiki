@@ -3,6 +3,9 @@
 /**
  * @file
  * Migration forms and handlers.
+ *
+ * Should upload a csv file with the followign headers:
+ * page_id,page_title,authors,categories,content
  */
 
 /**
@@ -111,8 +114,9 @@ function agile_import_wiki_form_submit($form, &$form_state) {
  */
 function agile_batch_add_record($record, $namespace, $collection_pid) {
   global $user;
+  $pid = $namespace . $record['page_id'];
   $tuque = new IslandoraTuque();
-  $object = $tuque->repository->constructObject($namespace);
+  $object = $tuque->repository->constructObject($pid);
   $object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $collection_pid);
   $object->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:sp_html_snippet');
   $title = str_replace('\"', '"', $record['page_title']);
