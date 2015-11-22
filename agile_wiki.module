@@ -11,3 +11,55 @@ function agile_wiki_menu() {
   );
   return $items;
 }
+
+/**
+ * Implements hook_islandora_required_objects().
+ */
+function agile_wiki_islandora_required_objects(IslandoraTuque $connection) {
+  $module_path = drupal_get_path('module', 'agile_wiki');
+  // HTML Snippet Collection.
+  $html_snippet_collection = $connection->repository->constructObject('yale:wiki_article_collection');
+  $html_snippet_collection->owner = 'fedoraAdmin';
+  $html_snippet_collection->label = 'Wiki Article Collection';
+  $html_snippet_collection->models = 'islandora:collectionCModel';
+  $html_snippet_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  // Collection Policy Datastream.
+  $datastream = $html_snippet_collection->constructDatastream('COLLECTION_POLICY', 'X');
+  $datastream->label = 'Collection policy';
+  $datastream->mimetype = 'application/xml';
+  $datastream->setContentFromFile("$module_path/xml/agile_wiki_collection_policy.xml", FALSE);
+  $html_snippet_collection->ingestDatastream($datastream);
+  // TN Datastream.
+  $datastream = $html_snippet_collection->constructDatastream('TN', 'M');
+  $datastream->label = 'Thumbnail';
+  $datastream->mimetype = 'image/png';
+  $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
+  $html_snippet_collection->ingestDatastream($datastream);
+  // Wiki Image Collection.
+  $wiki_image_collection = $connection->repository->constructObject('yale:wiki_image_collection');
+  $wiki_image_collection->owner = 'fedoraAdmin';
+  $wiki_image_collection->label = 'Wiki Images Collection';
+  $wiki_image_collection->models = 'islandora:collectionCModel';
+  $wiki_image_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  // Collection Policy Datastream.
+  $datastream = $wiki_image_collection->constructDatastream('COLLECTION_POLICY', 'X');
+  $datastream->label = 'Collection policy';
+  $datastream->mimetype = 'application/xml';
+  $datastream->setContentFromFile("$module_path/xml/agile_wiki_image_collection_policy.xml", FALSE);
+  $wiki_image_collection->ingestDatastream($datastream);
+  // TN Datastream.
+  $datastream = $wiki_image_collection->constructDatastream('TN', 'M');
+  $datastream->label = 'Thumbnail';
+  $datastream->mimetype = 'image/png';
+  $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
+  $wiki_image_collection->ingestDatastream($datastream);
+  return array(
+    'yale_wiki' => array(
+      'title' => 'Yale Wiki Migration',
+      'objects' => array(
+        $wiki_image_collection,
+        $html_snippet_collection,
+      ),
+    ),
+  );
+}

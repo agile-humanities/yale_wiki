@@ -31,9 +31,13 @@ function agile_import_wiki_form($form, &$form_state) {
   );
 
   $form['collection'] = array(
-    '#type' => 'textfield',
+    '#type' => 'select',
     '#title' => t("Collection"),
     '#description' => t('PID of collection to which new objects are being added'),
+    '#options' => array(
+      'yale:wiki_article_collection' => 'Yale Article Collection',
+      'yale:wiki_image_collection' => 'Yale Image Collection',
+    ),
   );
 
   $form['submit'] = array(
