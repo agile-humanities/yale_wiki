@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * islandora_html_snippet.install
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * @see agile_wiki_islandora_required_objects()
+ */
+function agile_wiki_install() {
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
+  islandora_install_solution_pack('agile_wiki');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function agile_wiki_uninstall() {
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
+  islandora_install_solution_pack('agile_wiki', 'uninstall');
+// Delete variables if we make any.
+}
