@@ -54,7 +54,7 @@ function agile_wiki_islandora_required_objects(IslandoraTuque $connection) {
   $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
   $wiki_image_collection->ingestDatastream($datastream);
   return array(
-    'yale_wiki' => array(
+    'agile_wiki' => array(
       'title' => 'Yale Wiki Migration',
       'objects' => array(
         $wiki_image_collection,
