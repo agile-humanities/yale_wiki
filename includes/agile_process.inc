@@ -114,7 +114,7 @@ function agile_import_wiki_form_submit($form, &$form_state) {
  */
 function agile_batch_add_record($record, $namespace, $collection_pid) {
   global $user;
-  $pid = $namespace . $record['page_id'];
+  $pid = $namespace . ':' . $record['page_id'];
   $tuque = new IslandoraTuque();
   $object = $tuque->repository->constructObject($pid);
   $object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $collection_pid);
