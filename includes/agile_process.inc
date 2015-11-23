@@ -114,7 +114,10 @@ function agile_import_wiki_form_submit($form, &$form_state) {
  */
 function agile_batch_add_record($record, $namespace, $collection_pid) {
   global $user;
-  $pid = $namespace . ':' . $record['page_id'];
+  $pid = $namespace;
+  if ($record['page_id']) {
+    $pid = $namespace . ':' . $record['page_id'];
+  }
   $tuque = new IslandoraTuque();
   $object = $tuque->repository->constructObject($pid);
   $object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOf', $collection_pid);
@@ -131,13 +134,18 @@ function agile_batch_add_record($record, $namespace, $collection_pid) {
   $mods_ds->mimetype = 'text/xml';
   $object->ingestDatastream($mods_ds);
   // Add OBJ datastream.
-//  $file = agile_wiki_get_associated_file($record['page_id']);  //ROSIE!!!  Write this function!!!
-//  $ds = $object->constructDatastream('OBJ', 'M');
-//  $ds->setContentFromFile($file, FALSE);
-//  $ds->label = 'OBJ';
-//  $ds->mimetype = "text/html";
-//  $object->ingestDatastream($ds);
+  $file = agile_wiki_get_associated_file($record['page_id']);  //ROSIE!!!  Write this function!!!
+  $ds = $object->constructDatastream('OBJ', 'M');
+  $ds->setContentFromFile($file, FALSE);
+  $ds->label = 'OBJ';
+  $ds->mimetype = "text/html";
+  $object->ingestDatastream($ds);
   islandora_add_object($object);
+}
+
+function agile_wiki_get_associated_file($id) {
+  $filename = 'public://html/' . $id . '.html';
+  return $filename;
 }
 
 function agile_wiki_read_csv($path) {
