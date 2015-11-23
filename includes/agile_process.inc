@@ -262,7 +262,7 @@ function agile_wiki_build_mods($record) {
 }
 
 function agile_wiki_add_author($xml, $name) {
-  $mods_uri = "http://www.loc.gov/mods/v2";
+  $mods_uri = "http://www.loc.gov/mods/v3";
   $root = $xml->documentElement;
   // name.
   $name_node = $xml->createElementNS($mods_uri, 'mods:name');
@@ -281,7 +281,7 @@ function agile_wiki_add_author($xml, $name) {
 }
 
 function agile_wiki_add_subjects($xml, $subjects) {
-  $mods_uri = "http://www.loc.gov/mods/v2";
+  $mods_uri = "http://www.loc.gov/mods/v3";
   $root = $xml->documentElement;
   // subject.
   $subject_node = $xml->createElementNS($mods_uri, 'mods:subject');
