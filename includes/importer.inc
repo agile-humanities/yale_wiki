@@ -24,6 +24,13 @@ class AgileZipBatchImporter extends ZipBatchImporter {
    *   An id to use in the back-end (Fedora).
    */
   protected function getId(AbstractFedoraObject $object) {
+    dpm($object);
+    if (isset($object['MODS'])) {
+      watchdog('agile', 'MODS is set');
+    }
+    else {
+      watchdog('agile', "MODS is not set.");
+    }
     // Command line argument overrides Collection Policy.
     if (isset($this->parameters['namespace'])) {
       $namespace = $this->parameters['namespace'];
