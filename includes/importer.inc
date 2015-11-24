@@ -8,10 +8,11 @@
 /**
  * Zip file importer.
  * @author adam
+ *
  */
 class AgileZipBatchImporter extends ZipBatchImporter {
 
-  protected $itemClass = 'AgileZipBatchImportObject';
+  protected $itemClass = 'ZipBatchImportObject';
 
   /**
    * Get an identifier we can use for an object.
