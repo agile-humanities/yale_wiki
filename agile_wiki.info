@@ -4,4 +4,5 @@ core = 7.x
 dependencies[] = islandora
 dependencies[] = islandora_html_snippet
 package = Agile Humanities
+files[] = includes/importer.inc
 version = 7.x-1.0

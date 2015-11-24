@@ -63,3 +63,15 @@ function agile_wiki_islandora_required_objects(IslandoraTuque $connection) {
     ),
   );
 }
+
+/**
+ * Implements hook_islandora_importer().
+ */
+function agile_wiki_islandora_importer() {
+  return array(
+    'agile_zip_importer' => array(
+      'title' => t('Agile ZIP File Importer'),
+      'class' => 'AgileZipBatchImporter',
+    ),
+  );
+}
