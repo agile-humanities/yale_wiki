@@ -30,6 +30,7 @@ class AgileZipBatchImporter extends ZipBatchImporter {
     else {
       $namespace = $this->determineNamespace($object);
     }
+    $namespace = 'foobar';
     // TODO: Implement some form of caching, so we can get multiple at a time.
     return $this->connection->repository->getNextIdentifier($namespace);
   }
