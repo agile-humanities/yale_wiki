@@ -69,6 +69,9 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
         $this->pid = 'yale:' . $string;
       }
     }
+    // TODO: Make the xpath configurable.
+    // TODO: make the namespace configurable.
+    // TODO: run through islandora_is_valid_pid($string).
 
     return $this->pid;
   }
