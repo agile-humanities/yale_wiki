@@ -12,7 +12,7 @@
  */
 class AgileZipBatchImporter extends ZipBatchImporter {
 
-  protected $itemClass = 'ZipBatchImportObject';
+  protected $itemClass = 'AgileZipBatchImportObject';
 
   /**
    * Get an identifier we can use for an object.
@@ -37,5 +37,46 @@ class AgileZipBatchImporter extends ZipBatchImporter {
     return $this->connection->repository->getNextIdentifier($namespace);
   }
 
+  /**
+   * Get the ID from local identifier in MODS.
+   *
+   *
+   * @return string
+   *   A string containing the id (eventually used as the pid).
+   */
+  public function getIdFromMods() {
+    if ($this->id === NULL) {
+      $mods = $this->getMODS();
+      if ($mods) {
+        $mods_doc = new DOMDocument();
+        $mods_doc->loadXML($mods);
+        $mods_xpath = new DOMXPath($mods_doc);
+        $mods_xpath->registerNamespace('m', 'http://www.loc.gov/mods/v3');
+
+        $string = $mods_xpath->evaluate('string(//m:mods/m:identifier[@type="local"]/text())');
+        $this->id = 'foobar1:' . $string;
+      }
+    }
+
+    return $this->id;
+  }
+
+}
+
+class AgileZipBatchImportObject extends ZipBatchImportObject
+{
+
+  public function getWrapperClass() {
+    return 'AgileIslandoraImporterBatchObject';
+  }
+}
+
+class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
+
+  public function batchProcess()
+  {
+    $this->id = $this->importerObjectInstance->getIdFromMods();
+    parent::batchProcess();
+  }
 
 }
