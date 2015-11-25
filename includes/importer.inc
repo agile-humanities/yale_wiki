@@ -9,6 +9,7 @@
  * Zip file importer.
  * @author adam
  *
+ * This class lets you select "Agile Zip Batch Importer" from the dropdown.
  */
 class AgileZipBatchImporter extends ZipBatchImporter {
 
@@ -24,7 +25,7 @@ class AgileZipBatchImporter extends ZipBatchImporter {
    *   An id to use in the back-end (Fedora).
    */
   protected function getId(AbstractFedoraObject $object) {
-    dpm($this);
+    dpm("object id is: " . $object->id);
     // Command line argument overrides Collection Policy.
     if (isset($this->parameters['namespace'])) {
       $namespace = $this->parameters['namespace'];
@@ -33,6 +34,7 @@ class AgileZipBatchImporter extends ZipBatchImporter {
       $namespace = $this->determineNamespace($object);
     }
     $namespace = 'foobar';
+    dpm("Getting next identifier.");
     // TODO: Implement some form of caching, so we can get multiple at a time.
     return $this->connection->repository->getNextIdentifier($namespace);
   }
@@ -40,8 +42,14 @@ class AgileZipBatchImporter extends ZipBatchImporter {
 
 }
 
+/*
+ * This is the itemClass specified above. Need it to select the WrapperClass.
+ *
+ */
 class AgileZipBatchImportObject extends ZipBatchImportObject
 {
+
+  protected $pid;
 
   public function getWrapperClass() {
     return 'AgileIslandoraImporterBatchObject';
@@ -54,6 +62,7 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
    *   A string containing the id (eventually used as the pid).
    */
   public function getIdFromMods() {
+    dpm("Getting ID from mods. Object id is currently: " . $this->id);
     if ($this->pid === NULL) {
       $mods = $this->getMODS();
       if ($mods) {
