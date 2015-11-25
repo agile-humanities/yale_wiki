@@ -17,6 +17,7 @@ class AgileZipBatchImporter extends ZipBatchImporter {
 
   /**
    * Get an identifier we can use for an object.
+   * See AgileIslandoraImporterBatchObject::getChosenId().
    *
    * @param AbstractFedoraObject $object
    *   The object to be later processed and added to Fedora.
@@ -26,21 +27,7 @@ class AgileZipBatchImporter extends ZipBatchImporter {
    */
   protected function getId(AbstractFedoraObject $object) {
     return $object->getChosenId();
-
-    dpm("object id is: " . $object->objectId);
-    // Command line argument overrides Collection Policy.
-    if (isset($this->parameters['namespace'])) {
-      $namespace = $this->parameters['namespace'];
-    }
-    else {
-      $namespace = $this->determineNamespace($object);
-    }
-    $namespace = 'foobar';
-    dpm("Getting next identifier.");
-    // TODO: Implement some form of caching, so we can get multiple at a time.
-    return $this->connection->repository->getNextIdentifier($namespace);
   }
-
 
 }
 
@@ -50,8 +37,8 @@ class AgileZipBatchImporter extends ZipBatchImporter {
  */
 class AgileZipBatchImportObject extends ZipBatchImportObject
 {
-
   protected $pid;
+
   /**
    * Constructor.
    */
@@ -79,13 +66,12 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
         $mods_xpath->registerNamespace('m', 'http://www.loc.gov/mods/v3');
 
         $string = $mods_xpath->evaluate('string(//m:mods/m:identifier[@type="local"]/text())');
-        $this->pid = 'foobar1:' . $string;
+        $this->pid = 'yale:' . $string;
       }
     }
 
     return $this->pid;
   }
-
 }
 
 class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
@@ -96,8 +82,6 @@ class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
   public function __construct(IslandoraTuque $connection, IslandoraImportObject $object, $preprocessor_parameters = array()) {
     parent::__construct($connection, $object, $preprocessor_parameters);
   }
-
-
 
   public function getChosenId() {
     return $this->importerObjectInstance->getIdFromMods();
