@@ -54,7 +54,7 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
    *   A string containing the id (eventually used as the pid).
    */
   public function getIdFromMods() {
-    if ($this->id === NULL) {
+    if ($this->pid === NULL) {
       $mods = $this->getMODS();
       if ($mods) {
         $mods_doc = new DOMDocument();
@@ -63,11 +63,11 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
         $mods_xpath->registerNamespace('m', 'http://www.loc.gov/mods/v3');
 
         $string = $mods_xpath->evaluate('string(//m:mods/m:identifier[@type="local"]/text())');
-        $this->id = 'foobar1:' . $string;
+        $this->pid = 'foobar1:' . $string;
       }
     }
 
-    return $this->id;
+    return $this->pid;
   }
 
 }
