@@ -50,6 +50,12 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
 {
 
   protected $pid;
+  /**
+   * Constructor.
+   */
+  protected function __construct($source) {
+    parent::__construct($source);
+  }
 
   public function getWrapperClass() {
     return 'AgileIslandoraImporterBatchObject';
