@@ -25,7 +25,9 @@ class AgileZipBatchImporter extends ZipBatchImporter {
    *   An id to use in the back-end (Fedora).
    */
   protected function getId(AbstractFedoraObject $object) {
-    dpm("object id is: " . $object->id);
+    return $object->getChosenId();
+
+    dpm("object id is: " . $object->objectId);
     // Command line argument overrides Collection Policy.
     if (isset($this->parameters['namespace'])) {
       $namespace = $this->parameters['namespace'];
@@ -68,7 +70,6 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
    *   A string containing the id (eventually used as the pid).
    */
   public function getIdFromMods() {
-    dpm("Getting ID from mods. Object id is currently: " . $this->id);
     if ($this->pid === NULL) {
       $mods = $this->getMODS();
       if ($mods) {
@@ -89,10 +90,17 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
 
 class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
 
-  public function batchProcess()
-  {
-    $this->id = $this->importerObjectInstance->getIdFromMods();
-    parent::batchProcess();
+  /**
+   * Constructor.
+   */
+  public function __construct(IslandoraTuque $connection, IslandoraImportObject $object, $preprocessor_parameters = array()) {
+    parent::__construct($connection, $object, $preprocessor_parameters);
+  }
+
+
+
+  public function getChosenId() {
+    return $this->importerObjectInstance->getIdFromMods();
   }
 
 }
