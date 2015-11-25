@@ -37,6 +37,15 @@ class AgileZipBatchImporter extends ZipBatchImporter {
     return $this->connection->repository->getNextIdentifier($namespace);
   }
 
+
+}
+
+class AgileZipBatchImportObject extends ZipBatchImportObject
+{
+
+  public function getWrapperClass() {
+    return 'AgileIslandoraImporterBatchObject';
+  }
   /**
    * Get the ID from local identifier in MODS.
    *
@@ -61,14 +70,6 @@ class AgileZipBatchImporter extends ZipBatchImporter {
     return $this->id;
   }
 
-}
-
-class AgileZipBatchImportObject extends ZipBatchImportObject
-{
-
-  public function getWrapperClass() {
-    return 'AgileIslandoraImporterBatchObject';
-  }
 }
 
 class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
