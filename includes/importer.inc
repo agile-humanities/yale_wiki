@@ -94,5 +94,4 @@ class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
     $this->id = $this->importerObjectInstance->getIdFromMods();
     parent::batchProcess();
   }
-
 }
