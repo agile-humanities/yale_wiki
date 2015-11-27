@@ -17,6 +17,7 @@ class AgileZipBatchImporter extends ZipBatchImporter {
 
   /**
    * Get an identifier we can use for an object.
+   * See AgileIslandoraImporterBatchObject::getChosenId().
    *
    * @param AbstractFedoraObject $object
    *   The object to be later processed and added to Fedora.
@@ -25,20 +26,8 @@ class AgileZipBatchImporter extends ZipBatchImporter {
    *   An id to use in the back-end (Fedora).
    */
   protected function getId(AbstractFedoraObject $object) {
-    dpm("object id is: " . $object->id);
-    // Command line argument overrides Collection Policy.
-    if (isset($this->parameters['namespace'])) {
-      $namespace = $this->parameters['namespace'];
-    }
-    else {
-      $namespace = $this->determineNamespace($object);
-    }
-    $namespace = 'foobar';
-    dpm("Getting next identifier.");
-    // TODO: Implement some form of caching, so we can get multiple at a time.
-    return $this->connection->repository->getNextIdentifier($namespace);
+    return $object->getChosenId();
   }
-
 
 }
 
@@ -48,8 +37,8 @@ class AgileZipBatchImporter extends ZipBatchImporter {
  */
 class AgileZipBatchImportObject extends ZipBatchImportObject
 {
-
   protected $pid;
+
   /**
    * Constructor.
    */
@@ -68,7 +57,6 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
    *   A string containing the id (eventually used as the pid).
    */
   public function getIdFromMods() {
-    dpm("Getting ID from mods. Object id is currently: " . $this->id);
     if ($this->pid === NULL) {
       $mods = $this->getMODS();
       if ($mods) {
@@ -78,20 +66,27 @@ class AgileZipBatchImportObject extends ZipBatchImportObject
         $mods_xpath->registerNamespace('m', 'http://www.loc.gov/mods/v3');
 
         $string = $mods_xpath->evaluate('string(//m:mods/m:identifier[@type="local"]/text())');
-        $this->pid = 'foobar1:' . $string;
+        $this->pid = 'yale:' . $string;
       }
     }
+    // TODO: Make the xpath configurable.
+    // TODO: make the namespace configurable.
+    // TODO: run through islandora_is_valid_pid($string).
 
     return $this->pid;
   }
-
 }
 
 class AgileIslandoraImporterBatchObject extends IslandoraImporterBatchObject {
 
-  public function batchProcess()
-  {
-    $this->id = $this->importerObjectInstance->getIdFromMods();
-    parent::batchProcess();
+  /**
+   * Constructor.
+   */
+  public function __construct(IslandoraTuque $connection, IslandoraImportObject $object, $preprocessor_parameters = array()) {
+    parent::__construct($connection, $object, $preprocessor_parameters);
+  }
+
+  public function getChosenId() {
+    return $this->importerObjectInstance->getIdFromMods();
   }
 }
