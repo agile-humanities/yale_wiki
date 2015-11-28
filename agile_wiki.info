@@ -5,5 +5,4 @@ dependencies[] = islandora
 dependencies[] = islandora_html_snippet
 package = Agile Humanities
 files[] = includes/importer.inc
-stylesheets[all][] = css/wiki.css
 version = 7.x-1.0
