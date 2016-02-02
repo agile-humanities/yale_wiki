@@ -144,7 +144,7 @@ function agile_batch_add_record($record, $namespace, $collection_pid) {
 }
 
 function agile_wiki_get_associated_file($id) {
-  $filename = 'public://html/' . $id . '.html';
+  $filename = '/tmp/yalewiki/html/' . $id . '.html';
   return $filename;
 }
 
